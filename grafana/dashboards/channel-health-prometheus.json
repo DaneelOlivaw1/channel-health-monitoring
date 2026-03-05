@@ -1,441 +1,827 @@
 {
-  "dashboard": {
-    "annotations": { "list": [] },
-    "editable": true,
-    "fiscalYearStartMonth": 0,
-    "graphTooltip": 1,
-    "id": null,
-    "links": [],
-    "liveNow": false,
-    "panels": [
-      {
-        "gridPos": { "h": 3, "w": 24, "x": 0, "y": 0 },
-        "id": 1,
-        "options": {
-          "code": { "language": "plaintext", "showLineNumbers": false, "showMiniMap": false },
-          "content": "# 渠道健康状况\n\n> **可用性** = 排除用户错误和我方问题后的成功率 &nbsp;|&nbsp; **平均每次花费** = 每次请求花多少钱（¥）\n>\n> **缓存复用率** = 缓存读取量 ÷（缓存读取量 + 缓存创建量）。每次对话会创建缓存（贵），后续复用缓存（便宜）。如果号池切换账号，缓存失效需重新创建，复用率会下降。**越高越省钱。**\n>\n> 排除规则与「渠道错误甄别」看板同步：400/404/413/429（用户错误）、401/403（鉴权）、余额不足、配置缺失 均已排除。",
-          "mode": "markdown"
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
         },
-        "title": "",
-        "transparent": true,
-        "type": "text"
+        "content": "# 渠道健康状况\n\n> **可用性** = 排除用户错误和我方问题后的成功率 &nbsp;|&nbsp; **平均每次花费** = 每次请求花多少钱（¥）\n>\n> **缓存复用率** = 缓存读取量 ÷（缓存读取量 + 缓存创建量）。每次对话会创建缓存（贵），后续复用缓存（便宜）。如果号池切换账号，缓存失效需重新创建，复用率会下降。**越高越省钱。**\n>\n> 排除规则与「渠道错误甄别」看板同步：400/404/413/429（用户错误）、401/403（鉴权）、余额不足、配置缺失 均已排除。",
+        "mode": "markdown"
       },
-      {
-        "collapsed": false,
-        "gridPos": { "h": 1, "w": 24, "x": 0, "y": 3 },
-        "id": 30,
-        "panels": [],
-        "title": "📋 渠道明细",
-        "type": "row"
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 3
       },
-      {
-        "datasource": { "type": "prometheus", "uid": "prometheus" },
-        "fieldConfig": {
-          "defaults": {
-            "color": { "mode": "thresholds" },
-            "custom": { "align": "center", "cellOptions": { "type": "auto" }, "inspect": false },
-            "mappings": [
-              {
-                "type": "value",
-                "options": {
-                  "aws": { "text": "AWS渠道" },
-                  "special": { "text": "特价渠道" }
+      "id": 30,
+      "panels": [],
+      "title": "📋 渠道明细",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "center",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "aws": {
+                  "text": "AWS渠道"
+                },
+                "special": {
+                  "text": "特价渠道"
                 }
               }
-            ],
-            "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }
-          },
-          "overrides": [
-            {
-              "matcher": { "id": "byName", "options": "可用性" },
-              "properties": [
-                { "id": "unit", "value": "percent" },
-                { "id": "decimals", "value": 1 },
-                { "id": "thresholds", "value": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "yellow", "value": 90 }, { "color": "green", "value": 95 }] } },
-                { "id": "custom.cellOptions", "value": { "type": "color-text" } }
-              ]
-            },
-            {
-              "matcher": { "id": "byName", "options": "缓存复用率" },
-              "properties": [
-                { "id": "unit", "value": "percent" },
-                { "id": "decimals", "value": 1 },
-                { "id": "thresholds", "value": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "yellow", "value": 60 }, { "color": "green", "value": 80 }] } },
-                { "id": "custom.cellOptions", "value": { "type": "color-text" } }
-              ]
-            },
-            {
-              "matcher": { "id": "byName", "options": "Opus单次花费" },
-              "properties": [
-                { "id": "unit", "value": "currencyCNY" },
-                { "id": "decimals", "value": 2 },
-                { "id": "thresholds", "value": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 2.0 }, { "color": "red", "value": 4.0 }] } },
-                { "id": "custom.cellOptions", "value": { "type": "color-text" } }
-              ]
-            },
-            {
-              "matcher": { "id": "byName", "options": "Sonnet单次花费" },
-              "properties": [
-                { "id": "unit", "value": "currencyCNY" },
-                { "id": "decimals", "value": 2 },
-                { "id": "thresholds", "value": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 0.5 }, { "color": "red", "value": 1.0 }] } },
-                { "id": "custom.cellOptions", "value": { "type": "color-text" } }
-              ]
             }
-          ]
-        },
-        "gridPos": { "h": 5, "w": 24, "x": 0, "y": 4 },
-        "id": 31,
-        "options": {
-          "cellHeight": "md",
-          "footer": { "countRows": false, "fields": "", "reducer": ["sum"], "show": false },
-          "showHeader": true
-        },
-        "targets": [
-          {
-            "datasource": { "type": "prometheus", "uid": "prometheus" },
-            "expr": "channel_availability_percent",
-            "format": "table",
-            "instant": true,
-            "refId": "A"
-          },
-          {
-            "datasource": { "type": "prometheus", "uid": "prometheus" },
-            "expr": "channel_cache_reuse_percent",
-            "format": "table",
-            "instant": true,
-            "refId": "B"
-          },
-          {
-            "datasource": { "type": "prometheus", "uid": "prometheus" },
-            "expr": "channel_avg_cost_cny_opus",
-            "format": "table",
-            "instant": true,
-            "refId": "C"
-          },
-          {
-            "datasource": { "type": "prometheus", "uid": "prometheus" },
-            "expr": "channel_avg_cost_cny_sonnet",
-            "format": "table",
-            "instant": true,
-            "refId": "D"
-          }
-        ],
-        "title": "📋 特价 vs AWS 对比",
-        "transformations": [
-          {
-            "id": "seriesToColumns",
-            "options": {
-              "byField": "channel_group"
-            }
-          },
-          {
-            "id": "organize",
-            "options": {
-              "excludeByName": { 
-                "Time": true,
-                "Time 1": true,
-                "Time 2": true,
-                "Time 3": true,
-                "Time 4": true,
-                "__name__": true,
-                "__name__ 1": true,
-                "__name__ 2": true,
-                "__name__ 3": true,
-                "__name__ 4": true,
-                "instance": true,
-                "instance 1": true,
-                "instance 2": true,
-                "instance 3": true,
-                "instance 4": true,
-                "job": true,
-                "job 1": true,
-                "job 2": true,
-                "job 3": true,
-                "job 4": true,
-                "app": true,
-                "app 1": true,
-                "app 2": true,
-                "app 3": true,
-                "app 4": true,
-                "service": true,
-                "service 1": true,
-                "service 2": true,
-                "service 3": true,
-                "service 4": true
-              },
-              "indexByName": {},
-              "renameByName": {
-                "channel_group": "渠道",
-                "Value #A": "可用性",
-                "Value #B": "缓存复用率",
-                "Value #C": "Opus单次花费",
-                "Value #D": "Sonnet单次花费"
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
               }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "可用性"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "red",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 90
+                    },
+                    {
+                      "color": "green",
+                      "value": 95
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "缓存复用率"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "red",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 60
+                    },
+                    {
+                      "color": "green",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Opus单次花费"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyCNY"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 2.0
+                    },
+                    {
+                      "color": "red",
+                      "value": 4.0
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Sonnet单次花费"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyCNY"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 0.5
+                    },
+                    {
+                      "color": "red",
+                      "value": 1.0
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 24,
+        "x": 0,
+        "y": 4
+      },
+      "id": 31,
+      "options": {
+        "cellHeight": "md",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "channel_availability_percent",
+          "format": "table",
+          "instant": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "channel_cache_reuse_percent",
+          "format": "table",
+          "instant": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "channel_avg_cost_cny_opus",
+          "format": "table",
+          "instant": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "channel_avg_cost_cny_sonnet",
+          "format": "table",
+          "instant": true,
+          "refId": "D"
+        }
+      ],
+      "title": "📋 特价 vs AWS 对比",
+      "transformations": [
+        {
+          "id": "seriesToColumns",
+          "options": {
+            "byField": "channel_group"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Time 1": true,
+              "Time 2": true,
+              "Time 3": true,
+              "Time 4": true,
+              "__name__": true,
+              "__name__ 1": true,
+              "__name__ 2": true,
+              "__name__ 3": true,
+              "__name__ 4": true,
+              "instance": true,
+              "instance 1": true,
+              "instance 2": true,
+              "instance 3": true,
+              "instance 4": true,
+              "job": true,
+              "job 1": true,
+              "job 2": true,
+              "job 3": true,
+              "job 4": true,
+              "app": true,
+              "app 1": true,
+              "app 2": true,
+              "app 3": true,
+              "app 4": true,
+              "service": true,
+              "service 1": true,
+              "service 2": true,
+              "service 3": true,
+              "service 4": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "channel_group": "渠道",
+              "Value #A": "可用性",
+              "Value #B": "缓存复用率",
+              "Value #C": "Opus单次花费",
+              "Value #D": "Sonnet单次花费"
             }
           }
-        ],
-        "type": "table"
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 9
       },
-      {
-        "collapsed": false,
-        "gridPos": { "h": 1, "w": 24, "x": 0, "y": 9 },
-        "id": 20,
-        "panels": [],
-        "title": "📈 趋势（特价 vs AWS）",
-        "type": "row"
+      "id": 20,
+      "panels": [],
+      "title": "📈 趋势（特价 vs AWS）",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
       },
-      {
-        "datasource": { "type": "prometheus", "uid": "prometheus" },
-        "fieldConfig": {
-          "defaults": {
-            "color": { "mode": "palette-classic" },
-            "custom": {
-              "axisCenteredZero": false,
-              "axisColorMode": "text",
-              "axisLabel": "",
-              "axisPlacement": "auto",
-              "barAlignment": 0,
-              "drawStyle": "line",
-              "fillOpacity": 15,
-              "gradientMode": "none",
-              "hideFrom": { "legend": false, "tooltip": false, "viz": false },
-              "lineInterpolation": "smooth",
-              "lineWidth": 2,
-              "pointSize": 5,
-              "scaleDistribution": { "type": "linear" },
-              "showPoints": "never",
-              "spanNulls": true,
-              "stacking": { "group": "A", "mode": "none" },
-              "thresholdsStyle": { "mode": "line" }
-            },
-            "mappings": [],
-            "max": 100,
-            "min": 0,
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                { "color": "red", "value": null },
-                { "color": "yellow", "value": 90 },
-                { "color": "green", "value": 95 }
-              ]
-            },
-            "unit": "percent"
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
           },
-          "overrides": [
-            {
-              "matcher": { "id": "byName", "options": "特价渠道" },
-              "properties": [
-                { "id": "color", "value": { "fixedColor": "blue", "mode": "fixed" } }
-              ]
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
             },
-            {
-              "matcher": { "id": "byName", "options": "AWS渠道" },
-              "properties": [
-                { "id": "color", "value": { "fixedColor": "green", "mode": "fixed" } }
-              ]
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "line"
             }
-          ]
-        },
-        "gridPos": { "h": 9, "w": 8, "x": 0, "y": 10 },
-        "id": 21,
-        "options": {
-          "legend": {
-            "calcs": ["mean", "lastNotNull"],
-            "displayMode": "table",
-            "placement": "bottom",
-            "showLegend": true
           },
-          "tooltip": { "mode": "multi", "sort": "desc" }
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 90
+              },
+              {
+                "color": "green",
+                "value": 95
+              }
+            ]
+          },
+          "unit": "percent"
         },
-        "targets": [
+        "overrides": [
           {
-            "datasource": { "type": "prometheus", "uid": "prometheus" },
-            "expr": "channel_availability_percent{channel_group=\"special\"}",
-            "legendFormat": "特价渠道",
-            "refId": "A"
+            "matcher": {
+              "id": "byName",
+              "options": "特价渠道"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
           },
           {
-            "datasource": { "type": "prometheus", "uid": "prometheus" },
-            "expr": "channel_availability_percent{channel_group=\"aws\"}",
-            "legendFormat": "AWS渠道",
-            "refId": "B"
+            "matcher": {
+              "id": "byName",
+              "options": "AWS渠道"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
           }
-        ],
-        "title": "🟢 可用性",
-        "type": "timeseries"
+        ]
       },
-      {
-        "datasource": { "type": "prometheus", "uid": "prometheus" },
-        "fieldConfig": {
-          "defaults": {
-            "color": { "mode": "palette-classic" },
-            "custom": {
-              "axisCenteredZero": false,
-              "axisColorMode": "text",
-              "axisLabel": "",
-              "axisPlacement": "auto",
-              "barAlignment": 0,
-              "drawStyle": "line",
-              "fillOpacity": 15,
-              "gradientMode": "none",
-              "hideFrom": { "legend": false, "tooltip": false, "viz": false },
-              "lineInterpolation": "smooth",
-              "lineWidth": 2,
-              "pointSize": 5,
-              "scaleDistribution": { "type": "linear" },
-              "showPoints": "never",
-              "spanNulls": true,
-              "stacking": { "group": "A", "mode": "none" },
-              "thresholdsStyle": { "mode": "line" }
-            },
-            "mappings": [],
-            "max": 100,
-            "min": 0,
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                { "color": "red", "value": null },
-                { "color": "yellow", "value": 60 },
-                { "color": "green", "value": 80 }
-              ]
-            },
-            "unit": "percent"
-          },
-          "overrides": [
-            {
-              "matcher": { "id": "byName", "options": "特价渠道" },
-              "properties": [
-                { "id": "color", "value": { "fixedColor": "blue", "mode": "fixed" } }
-              ]
-            },
-            {
-              "matcher": { "id": "byName", "options": "AWS渠道" },
-              "properties": [
-                { "id": "color", "value": { "fixedColor": "green", "mode": "fixed" } }
-              ]
-            }
-          ]
-        },
-        "gridPos": { "h": 9, "w": 8, "x": 8, "y": 10 },
-        "id": 22,
-        "options": {
-          "legend": {
-            "calcs": ["mean", "lastNotNull"],
-            "displayMode": "table",
-            "placement": "bottom",
-            "showLegend": true
-          },
-          "tooltip": { "mode": "multi", "sort": "desc" }
-        },
-        "targets": [
-          {
-            "datasource": { "type": "prometheus", "uid": "prometheus" },
-            "expr": "channel_cache_reuse_percent{channel_group=\"special\"}",
-            "legendFormat": "特价渠道",
-            "refId": "A"
-          },
-          {
-            "datasource": { "type": "prometheus", "uid": "prometheus" },
-            "expr": "channel_cache_reuse_percent{channel_group=\"aws\"}",
-            "legendFormat": "AWS渠道",
-            "refId": "B"
-          }
-        ],
-        "title": "💾 缓存复用率",
-        "type": "timeseries"
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 0,
+        "y": 10
       },
-      {
-        "datasource": { "type": "prometheus", "uid": "prometheus" },
-        "fieldConfig": {
-          "defaults": {
-            "color": { "mode": "palette-classic" },
-            "custom": {
-              "axisCenteredZero": false,
-              "axisColorMode": "text",
-              "axisLabel": "¥/次",
-              "axisPlacement": "auto",
-              "barAlignment": 0,
-              "drawStyle": "line",
-              "fillOpacity": 10,
-              "gradientMode": "none",
-              "hideFrom": { "legend": false, "tooltip": false, "viz": false },
-              "lineInterpolation": "smooth",
-              "lineWidth": 2,
-              "pointSize": 5,
-              "scaleDistribution": { "type": "linear" },
-              "showPoints": "never",
-              "spanNulls": true,
-              "stacking": { "group": "A", "mode": "none" },
-              "thresholdsStyle": { "mode": "line" }
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                { "color": "green", "value": null },
-                { "color": "yellow", "value": 0.8 },
-                { "color": "red", "value": 1.5 }
-              ]
-            },
-            "decimals": 2,
-            "unit": "currencyCNY"
+      "id": 21,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
           },
-          "overrides": [
-            {
-              "matcher": { "id": "byName", "options": "特价渠道" },
-              "properties": [
-                { "id": "color", "value": { "fixedColor": "blue", "mode": "fixed" } }
-              ]
+          "expr": "channel_availability_percent{channel_group=\"special\"}",
+          "legendFormat": "特价渠道",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "channel_availability_percent{channel_group=\"aws\"}",
+          "legendFormat": "AWS渠道",
+          "refId": "B"
+        }
+      ],
+      "title": "🟢 可用性",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
             },
-            {
-              "matcher": { "id": "byName", "options": "AWS渠道" },
-              "properties": [
-                { "id": "color", "value": { "fixedColor": "green", "mode": "fixed" } }
-              ]
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "line"
             }
-          ]
-        },
-        "gridPos": { "h": 9, "w": 8, "x": 16, "y": 10 },
-        "id": 23,
-        "options": {
-          "legend": {
-            "calcs": ["mean", "lastNotNull"],
-            "displayMode": "table",
-            "placement": "bottom",
-            "showLegend": true
           },
-          "tooltip": { "mode": "multi", "sort": "desc" }
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 60
+              },
+              {
+                "color": "green",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
         },
-        "targets": [
+        "overrides": [
           {
-            "datasource": { "type": "prometheus", "uid": "prometheus" },
-            "expr": "channel_avg_cost_cny_all{channel_group=\"special\"}",
-            "legendFormat": "特价渠道",
-            "refId": "A"
+            "matcher": {
+              "id": "byName",
+              "options": "特价渠道"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
           },
           {
-            "datasource": { "type": "prometheus", "uid": "prometheus" },
-            "expr": "channel_avg_cost_cny_all{channel_group=\"aws\"}",
-            "legendFormat": "AWS渠道",
-            "refId": "B"
+            "matcher": {
+              "id": "byName",
+              "options": "AWS渠道"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
           }
-        ],
-        "title": "💰 平均每次花费（¥）",
-        "type": "timeseries"
-      }
-    ],
-    "refresh": "1m",
-    "schemaVersion": 38,
-    "style": "dark",
-    "tags": ["channel", "availability", "prometheus"],
-    "templating": { "list": [] },
-    "time": { "from": "now-3h", "to": "now" },
-    "timepicker": {},
-    "timezone": "browser",
-    "title": "渠道健康状况 (Prometheus)",
-    "uid": "channel-health-prometheus",
-    "version": 2
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 8,
+        "y": 10
+      },
+      "id": 22,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "channel_cache_reuse_percent{channel_group=\"special\"}",
+          "legendFormat": "特价渠道",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "channel_cache_reuse_percent{channel_group=\"aws\"}",
+          "legendFormat": "AWS渠道",
+          "refId": "B"
+        }
+      ],
+      "title": "💾 缓存复用率",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "¥/次",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "line"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 0.8
+              },
+              {
+                "color": "red",
+                "value": 1.5
+              }
+            ]
+          },
+          "decimals": 2,
+          "unit": "currencyCNY"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "特价渠道"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "AWS渠道"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 10
+      },
+      "id": 23,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "channel_avg_cost_cny_all{channel_group=\"special\"}",
+          "legendFormat": "特价渠道",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "channel_avg_cost_cny_all{channel_group=\"aws\"}",
+          "legendFormat": "AWS渠道",
+          "refId": "B"
+        }
+      ],
+      "title": "💰 平均每次花费（¥）",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "1m",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [
+    "channel",
+    "availability",
+    "prometheus"
+  ],
+  "templating": {
+    "list": []
   },
-  "overwrite": true
+  "time": {
+    "from": "now-3h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "渠道健康状况 (Prometheus)",
+  "uid": "channel-health-prometheus",
+  "version": 2
 }

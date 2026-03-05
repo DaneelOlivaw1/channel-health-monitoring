@@ -1,167 +1,167 @@
 # Proxy Project Observatory
 
-Complete monitoring stack for Prometheus + Grafana + Alertmanager with pre-configured dashboards and custom exporters.
+完整的监控技术栈，包含 Prometheus + Grafana + Alertmanager，预配置仪表板和自定义导出器。
 
-## Features
+## 功能特性
 
-- **Prometheus**: Metrics collection and storage
-- **Grafana**: Visualization dashboards (System Overview, Application Metrics)
-- **Alertmanager**: Alert routing and management
-- **Node Exporter**: System-level metrics (CPU, memory, disk, network)
-- **cAdvisor**: Container metrics
-- **Custom Exporter**: Application-specific metrics example
+- **Prometheus**: 指标收集和存储
+- **Grafana**: 可视化仪表板（系统概览、应用指标）
+- **Alertmanager**: 告警路由和管理
+- **Node Exporter**: 系统级指标（CPU、内存、磁盘、网络）
+- **cAdvisor**: 容器指标
+- **自定义导出器**: 应用特定指标示例
 
-## Quick Start
+## 快速开始
 
-### Prerequisites
+### 前置要求
 
 - Docker
 - Docker Compose
 
-### Start the Stack
+### 启动技术栈
 
 ```bash
 docker-compose up -d
 ```
 
-### Access Services
+### 访问服务
 
 - **Grafana**: http://localhost:3000
-  - Default credentials: `admin` / `admin`
-  - Pre-loaded dashboards: System Overview, Application Metrics
+  - 默认凭据: `admin` / `admin`
+  - 预加载仪表板: 系统概览、应用指标
 
 - **Prometheus**: http://localhost:9090
-  - Explore metrics and query data
-  - Check alert rules status
+  - 探索指标和查询数据
+  - 检查告警规则状态
 
 - **Alertmanager**: http://localhost:9093
-  - View active alerts
-  - Configure alert routing
+  - 查看活动告警
+  - 配置告警路由
 
 - **Node Exporter**: http://localhost:9100/metrics
 - **cAdvisor**: http://localhost:8080
-- **Custom Exporter**: http://localhost:8000/metrics
+- **自定义导出器**: http://localhost:8000/metrics
 
-### Stop the Stack
+### 停止技术栈
 
 ```bash
 docker-compose down
 ```
 
-To remove volumes (data will be lost):
+删除数据卷（数据将丢失）:
 
 ```bash
 docker-compose down -v
 ```
 
-## Configuration
+## 配置
 
-### Environment Variables
+### 环境变量
 
-Copy `.env.example` to `.env` and customize:
+复制 `.env.example` 到 `.env` 并自定义:
 
 ```bash
 cp .env.example .env
 ```
 
-Available variables:
-- `GRAFANA_ADMIN_USER`: Grafana admin username (default: admin)
-- `GRAFANA_ADMIN_PASSWORD`: Grafana admin password (default: admin)
+可用变量:
+- `GRAFANA_ADMIN_USER`: Grafana 管理员用户名（默认: admin）
+- `GRAFANA_ADMIN_PASSWORD`: Grafana 管理员密码（默认: admin）
 
-### Prometheus Configuration
+### Prometheus 配置
 
-Edit `prometheus/prometheus.yml` to:
-- Add scrape targets
-- Adjust scrape intervals
-- Configure service discovery
+编辑 `prometheus/prometheus.yml` 以:
+- 添加抓取目标
+- 调整抓取间隔
+- 配置服务发现
 
-### Alert Rules
+### 告警规则
 
-Alert rules are in `prometheus/alerts/rules.yml`:
+告警规则位于 `prometheus/alerts/rules.yml`:
 
-- **Host Alerts**: CPU, memory, disk usage
-- **Container Alerts**: Container health and resource usage
-- **Application Alerts**: Error rates, response times
+- **主机告警**: CPU、内存、磁盘使用率
+- **容器告警**: 容器健康状态和资源使用
+- **应用告警**: 错误率、响应时间
 
-Edit thresholds and add custom rules as needed.
+根据需要编辑阈值和添加自定义规则。
 
-### Alertmanager Configuration
+### Alertmanager 配置
 
-Configure alert routing in `alertmanager/alertmanager.yml`:
+在 `alertmanager/alertmanager.yml` 中配置告警路由:
 
-1. Update SMTP settings for email notifications
-2. Configure webhook endpoints
-3. Adjust routing rules
+1. 更新 SMTP 设置以发送邮件通知
+2. 配置 webhook 端点
+3. 调整路由规则
 
-### Custom Exporter
+### 自定义导出器
 
-The example exporter in `exporters/custom-exporter/` demonstrates:
+`exporters/custom-exporter/` 中的示例导出器演示了:
 
-- Gauge metrics (connections, CPU, memory)
-- Counter metrics (request counts)
-- Histogram metrics (request duration)
+- 仪表指标（连接数、CPU、内存）
+- 计数器指标（请求计数）
+- 直方图指标（请求持续时间）
 
-To customize:
+自定义方法:
 
-1. Edit `exporters/custom-exporter/exporter.py`
-2. Add your application-specific metrics
-3. Rebuild: `docker-compose up -d --build custom-exporter`
+1. 编辑 `exporters/custom-exporter/exporter.py`
+2. 添加你的应用特定指标
+3. 重新构建: `docker-compose up -d --build custom-exporter`
 
-## Dashboards
+## 仪表板
 
-### System Overview
+### 系统概览
 
-Monitors system resources:
-- CPU usage (current + historical)
-- Memory usage (current + historical)
-- Disk space availability
-- Network traffic
-- Disk I/O
-- Service status
+监控系统资源:
+- CPU 使用率（当前 + 历史）
+- 内存使用率（当前 + 历史）
+- 磁盘空间可用性
+- 网络流量
+- 磁盘 I/O
+- 服务状态
 
-### Application Metrics
+### 应用指标
 
-Monitors application performance:
-- Error rate
-- Response time percentiles (p50, p95, p99)
-- Request rate
-- HTTP status code distribution
-- Active connections
+监控应用性能:
+- 错误率
+- 响应时间百分位数（p50、p95、p99）
+- 请求速率
+- HTTP 状态码分布
+- 活动连接数
 
-## Alert Rules
+## 告警规则
 
-### Host Alerts
+### 主机告警
 
-| Alert | Threshold | Duration | Severity |
+| 告警 | 阈值 | 持续时间 | 严重程度 |
 |-------|-----------|----------|----------|
-| HostDown | Service unavailable | 1m | critical |
-| HighCPUUsage | >80% | 5m | warning |
-| CriticalCPUUsage | >95% | 2m | critical |
-| HighMemoryUsage | >80% | 5m | warning |
-| CriticalMemoryUsage | >95% | 2m | critical |
-| HighDiskUsage | <20% free | 5m | warning |
-| CriticalDiskUsage | <10% free | 2m | critical |
+| HostDown | 服务不可用 | 1分钟 | 严重 |
+| HighCPUUsage | >80% | 5分钟 | 警告 |
+| CriticalCPUUsage | >95% | 2分钟 | 严重 |
+| HighMemoryUsage | >80% | 5分钟 | 警告 |
+| CriticalMemoryUsage | >95% | 2分钟 | 严重 |
+| HighDiskUsage | <20% 可用 | 5分钟 | 警告 |
+| CriticalDiskUsage | <10% 可用 | 2分钟 | 严重 |
 
-### Container Alerts
+### 容器告警
 
-| Alert | Condition | Duration | Severity |
+| 告警 | 条件 | 持续时间 | 严重程度 |
 |-------|-----------|----------|----------|
-| ContainerDown | Container not running | 1m | warning |
-| HighContainerCPU | >80% | 5m | warning |
-| HighContainerMemory | >80% | 5m | warning |
+| ContainerDown | 容器未运行 | 1分钟 | 警告 |
+| HighContainerCPU | >80% | 5分钟 | 警告 |
+| HighContainerMemory | >80% | 5分钟 | 警告 |
 
-### Application Alerts
+### 应用告警
 
-| Alert | Threshold | Duration | Severity |
+| 告警 | 阈值 | 持续时间 | 严重程度 |
 |-------|-----------|----------|----------|
-| HighErrorRate | >5% | 5m | warning |
-| SlowResponseTime | p95 >1s | 5m | warning |
+| HighErrorRate | >5% | 5分钟 | 警告 |
+| SlowResponseTime | p95 >1秒 | 5分钟 | 警告 |
 
-## Extending the Stack
+## 扩展技术栈
 
-### Add New Scrape Target
+### 添加新的抓取目标
 
-Edit `prometheus/prometheus.yml`:
+编辑 `prometheus/prometheus.yml`:
 
 ```yaml
 scrape_configs:
@@ -172,9 +172,9 @@ scrape_configs:
           service: 'my-service'
 ```
 
-### Add Custom Alert Rule
+### 添加自定义告警规则
 
-Create a new file in `prometheus/alerts/`:
+在 `prometheus/alerts/` 中创建新文件:
 
 ```yaml
 groups:
@@ -187,18 +187,18 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "My custom alert"
+          summary: "我的自定义告警"
 ```
 
-### Import Additional Dashboards
+### 导入额外的仪表板
 
-1. Export dashboard JSON from Grafana UI
-2. Save to `grafana/dashboards/`
-3. Restart Grafana: `docker-compose restart grafana`
+1. 从 Grafana UI 导出仪表板 JSON
+2. 保存到 `grafana/dashboards/`
+3. 重启 Grafana: `docker-compose restart grafana`
 
-## Troubleshooting
+## 故障排查
 
-### Check Service Logs
+### 检查服务日志
 
 ```bash
 docker-compose logs prometheus
@@ -206,25 +206,25 @@ docker-compose logs grafana
 docker-compose logs alertmanager
 ```
 
-### Verify Targets
+### 验证目标
 
-Open Prometheus UI (http://localhost:9090) → Status → Targets
+打开 Prometheus UI (http://localhost:9090) → Status → Targets
 
-All targets should show "UP" status.
+所有目标应显示 "UP" 状态。
 
-### Reload Prometheus Configuration
+### 重新加载 Prometheus 配置
 
 ```bash
 curl -X POST http://localhost:9090/-/reload
 ```
 
-### Dashboard Not Loading
+### 仪表板无法加载
 
-1. Check Grafana logs: `docker-compose logs grafana`
-2. Verify dashboard JSON syntax
-3. Restart Grafana: `docker-compose restart grafana`
+1. 检查 Grafana 日志: `docker-compose logs grafana`
+2. 验证仪表板 JSON 语法
+3. 重启 Grafana: `docker-compose restart grafana`
 
-## Project Structure
+## 项目结构
 
 ```
 proxy_project-observatory/
@@ -252,6 +252,6 @@ proxy_project-observatory/
         └── exporter.py
 ```
 
-## License
+## 许可证
 
 MIT

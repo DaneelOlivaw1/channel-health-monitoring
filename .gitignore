@@ -1,0 +1,25 @@
+# Grafana data
+grafana_data/
+
+# Prometheus data
+prometheus_data/
+
+# Alertmanager data
+alertmanager_data/
+
+# Environment variables
+.env
+
+# Backup files
+*.bak
+
+# Temporary files
+/tmp/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Docker volumes
+volumes/

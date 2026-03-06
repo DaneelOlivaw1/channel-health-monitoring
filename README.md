@@ -224,7 +224,7 @@ WHERE created_at > now() - interval '5 minutes'
 
 ```
 proxy_project-observatory/
-├── AGENTS.md                          # AI 工作手册（不提交，含线上凭据）
+├── AGENTS.md                          # AI 工作手册（含线上凭据）
 ├── docker-compose.yml                 # 只有 rust-exporter
 ├── .env.example                       # 环境变量模板
 ├── rust-exporter/                     # Rust 指标采集器

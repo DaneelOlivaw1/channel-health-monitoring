@@ -40,26 +40,6 @@ services:
     depends_on:
       - prometheus
 
-  channel-health-exporter:
-    build:
-      context: ./exporters/channel-health-exporter
-      dockerfile: Dockerfile
-    container_name: channel-health-exporter
-    environment:
-      - EXPORTER_PORT=8001
-      - SCRAPE_INTERVAL=60
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
-      - DB_NAME=${DB_NAME}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-    ports:
-      - "8003:8001"
-      - "8004:8002"
-    networks:
-      - monitoring
-    restart: unless-stopped
-
   rust-exporter:
     build:
       context: ./rust-exporter

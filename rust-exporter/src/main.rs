@@ -8,6 +8,7 @@ use rust_exporter::{
         cache::collector::CacheCollector,
         cost::collector::CostCollector,
     },
+    pushgateway::{PushgatewayConfig, start_pushgateway_worker},
 };
 use std::time::Duration;
 use tokio::{signal, time};
@@ -57,6 +58,19 @@ async fn main() -> Result<()> {
                 }
             }
         });
+    }
+    
+    // Start Pushgateway worker if configured
+    let pushgateway_config = PushgatewayConfig::from_env()?;
+    if pushgateway_config.is_enabled() {
+        info!("Pushgateway is enabled, starting worker...");
+        tokio::spawn(async move {
+            if let Err(e) = start_pushgateway_worker(pushgateway_config).await {
+                error!("Pushgateway worker error: {}", e);
+            }
+        });
+    } else {
+        info!("Pushgateway is disabled");
     }
     
     let app = create_router();

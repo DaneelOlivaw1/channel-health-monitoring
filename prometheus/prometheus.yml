@@ -19,3 +19,11 @@ scrape_configs:
         labels:
           service: 'channel-health'
           app: 'claude_code'
+
+  - job_name: 'rust-exporter'
+    scrape_interval: 60s
+    static_configs:
+      - targets: ['rust-exporter:8001']
+        labels:
+          service: 'rust-exporter'
+          app: 'claude_code'

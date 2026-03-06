@@ -1,9 +1,20 @@
 import time
 import os
+import json
 import psycopg2
 from psycopg2 import pool
-from prometheus_client import start_http_server, Gauge
+from prometheus_client import start_http_server
 from datetime import datetime
+from http.server import HTTPServer, BaseHTTPRequestHandler
+from threading import Thread
+from metrics import (
+    channel_availability,
+    channel_cache_reuse_rate,
+    channel_avg_cost_opus,
+    channel_avg_cost_sonnet,
+    channel_avg_cost_all,
+    get_metrics_config,
+)
 
 EXPORTER_PORT = int(os.getenv("EXPORTER_PORT", "8001"))
 SCRAPE_INTERVAL = int(os.getenv("SCRAPE_INTERVAL", "60"))
@@ -13,34 +24,6 @@ DB_PORT = int(os.getenv("DB_PORT", "5432"))
 DB_NAME = os.getenv("DB_NAME", "claude_code")
 DB_USER = os.getenv("DB_USER", "dev_read_chunqiu")
 DB_PASSWORD = os.getenv("DB_PASSWORD", "")
-
-channel_availability = Gauge(
-    "channel_availability_percent",
-    "Channel availability percentage (excluding user errors)",
-    ["channel_group"],
-)
-
-channel_cache_reuse_rate = Gauge(
-    "channel_cache_reuse_percent", "Cache reuse rate percentage", ["channel_group"]
-)
-
-channel_avg_cost_opus = Gauge(
-    "channel_avg_cost_cny_opus",
-    "Average cost per Opus request in CNY",
-    ["channel_group"],
-)
-
-channel_avg_cost_sonnet = Gauge(
-    "channel_avg_cost_cny_sonnet",
-    "Average cost per Sonnet request in CNY",
-    ["channel_group"],
-)
-
-channel_avg_cost_all = Gauge(
-    "channel_avg_cost_cny_all",
-    "Average cost per request in CNY (all models)",
-    ["channel_group"],
-)
 
 
 class ChannelHealthExporter:
@@ -213,10 +196,49 @@ class ChannelHealthExporter:
             time.sleep(SCRAPE_INTERVAL)
 
 
+class MetadataHandler(BaseHTTPRequestHandler):
+    """HTTP handler for serving metrics metadata"""
+
+    def do_GET(self):
+        if self.path == "/metrics-metadata":
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+
+            # Get metrics config directly from YAML
+            metrics_list = get_metrics_config()
+
+            self.wfile.write(
+                json.dumps(metrics_list, ensure_ascii=False, indent=2).encode("utf-8")
+            )
+        else:
+            self.send_response(404)
+            self.end_headers()
+
+    def log_message(self, format, *args):
+        # Suppress default logging
+        pass
+
+
 if __name__ == "__main__":
+    # Start Prometheus metrics server
     start_http_server(EXPORTER_PORT)
     print(f"Channel Health Exporter started on port {EXPORTER_PORT}")
+    print(f"Metrics endpoint: http://localhost:{EXPORTER_PORT}/metrics")
+    print(f"Metadata endpoint: http://localhost:{EXPORTER_PORT}/metrics-metadata")
     print(f"Scrape interval: {SCRAPE_INTERVAL}s")
+
+    # Start metadata HTTP server on the same port (using prometheus_client's server)
+    # We need to add a custom handler to the existing server
+    # Since prometheus_client doesn't support custom endpoints easily,
+    # we'll start a separate server on port 8002 for metadata
+    METADATA_PORT = EXPORTER_PORT + 1
+    metadata_server = HTTPServer(("0.0.0.0", METADATA_PORT), MetadataHandler)
+    metadata_thread = Thread(target=metadata_server.serve_forever, daemon=True)
+    metadata_thread.start()
+    print(f"Metadata API started on port {METADATA_PORT}")
+    print(f"Access at: http://localhost:{METADATA_PORT}/metrics-metadata")
 
     exporter = ChannelHealthExporter()
     exporter.run()

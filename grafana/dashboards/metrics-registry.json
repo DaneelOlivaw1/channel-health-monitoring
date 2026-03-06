@@ -1,0 +1,92 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "# 📊 指标注册表 (Metrics Registry)\n\n这个看板**自动从 YAML 配置文件读取**所有指标的元数据。修改 `metrics.yaml` 后，重启 exporter 即可自动同步。\n\n💡 **点击表格行可以展开查看详细信息**（SQL 查询、计算公式、备注等）",
+        "mode": "markdown"
+      },
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "gridPos": {
+        "h": 20,
+        "w": 24,
+        "x": 0,
+        "y": 3
+      },
+      "id": 2,
+      "options": {
+        "code": {
+          "language": "html",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<!DOCTYPE html>\n<html>\n<head>\n<style>\n  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 20px; background: transparent; }\n  table { width: 100%; border-collapse: collapse; background: #1f1f1f; }\n  th { background: #2a2a2a; color: #fff; padding: 12px; text-align: left; font-weight: 600; border-bottom: 2px solid #3a3a3a; }\n  tr { border-bottom: 1px solid #2a2a2a; cursor: pointer; }\n  tr:hover { background: #252525; }\n  td { padding: 12px; color: #ddd; }\n  .expanded { background: #1a1a1a !important; }\n  .details { display: none; padding: 20px; background: #1a1a1a; border-top: 1px solid #3a3a3a; }\n  .details.show { display: block; }\n  .details h4 { margin: 0 0 10px 0; color: #58a6ff; }\n  .details pre { background: #0d1117; padding: 15px; border-radius: 6px; overflow-x: auto; color: #c9d1d9; border: 1px solid #30363d; }\n  .arrow { display: inline-block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 8px solid #888; margin-right: 8px; transition: transform 0.2s; }\n  .arrow.down { transform: rotate(0deg); }\n  .arrow.right { transform: rotate(-90deg); }\n  .badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: 600; }\n  .badge-gauge { background: #1f6feb; color: #fff; }\n  .loading { text-align: center; padding: 40px; color: #888; }\n</style>\n</head>\n<body>\n<div id=\"loading\" class=\"loading\">加载中...</div>\n<table id=\"metricsTable\" style=\"display:none;\">\n  <thead>\n    <tr>\n      <th style=\"width: 40px;\"></th>\n      <th style=\"width: 280px;\">指标名</th>\n      <th style=\"width: 80px;\">类型</th>\n      <th style=\"width: 100px;\">采集频率</th>\n      <th>描述</th>\n    </tr>\n  </thead>\n  <tbody id=\"tableBody\"></tbody>\n</table>\n\n<script>\nfetch('http://localhost:8002/metrics-metadata')\n  .then(res => res.json())\n  .then(data => {\n    document.getElementById('loading').style.display = 'none';\n    document.getElementById('metricsTable').style.display = 'table';\n    \n    const tbody = document.getElementById('tableBody');\n    data.forEach((metric, index) => {\n      const row = document.createElement('tr');\n      row.id = `row-${index}`;\n      row.innerHTML = `\n        <td><span class=\"arrow right\" id=\"arrow-${index}\"></span></td>\n        <td><code>${metric.name}</code></td>\n        <td><span class=\"badge badge-gauge\">${metric.type}</span></td>\n        <td>${metric.collection_frequency}</td>\n        <td>${metric.description}</td>\n      `;\n      \n      const detailsRow = document.createElement('tr');\n      detailsRow.id = `details-${index}`;\n      detailsRow.innerHTML = `\n        <td colspan=\"5\" class=\"details\" id=\"detail-${index}\">\n          <h4>📋 备注</h4>\n          <p>${metric.notes || '无'}</p>\n          \n          <h4>🧮 计算公式</h4>\n          <pre>${metric.calculation_formula}</pre>\n          \n          <h4>💾 SQL 查询</h4>\n          <pre>${metric.sql_query}</pre>\n        </td>\n      `;\n      \n      row.onclick = () => {\n        const details = document.getElementById(`detail-${index}`);\n        const arrow = document.getElementById(`arrow-${index}`);\n        const isExpanded = details.classList.contains('show');\n        \n        if (isExpanded) {\n          details.classList.remove('show');\n          arrow.classList.remove('down');\n          arrow.classList.add('right');\n          row.classList.remove('expanded');\n        } else {\n          details.classList.add('show');\n          arrow.classList.remove('right');\n          arrow.classList.add('down');\n          row.classList.add('expanded');\n        }\n      };\n      \n      tbody.appendChild(row);\n      tbody.appendChild(detailsRow);\n    });\n  })\n  .catch(err => {\n    document.getElementById('loading').innerHTML = '❌ 加载失败: ' + err.message + '<br><br>请确保 exporter 正在运行: <code>docker compose ps channel-health-exporter</code>';\n  });\n</script>\n</body>\n</html>",
+        "mode": "html"
+      },
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 23
+      },
+      "id": 3,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "## 📝 如何添加新指标\n\n1. 编辑 `exporters/channel-health-exporter/metrics.yaml`\n2. 添加新的指标配置（参考现有格式）\n3. 在 `exporter.py` 中添加对应的采集方法\n4. 重启 exporter: `docker compose restart channel-health-exporter`\n5. 刷新此页面，新指标会自动出现\n\n**无需手动更新 Grafana 看板！**所有元数据（包括 SQL、计算公式）都从 YAML 自动同步。\n\n---\n\n## 🔍 直接访问 API\n\n```bash\ncurl http://localhost:8002/metrics-metadata | jq\n```",
+        "mode": "markdown"
+      },
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 39,
+  "tags": ["metrics", "registry", "documentation"],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "指标注册表 (Metrics Registry)",
+  "uid": "metrics-registry",
+  "version": 0,
+  "weekStart": ""
+}

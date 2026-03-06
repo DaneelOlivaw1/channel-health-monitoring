@@ -5,8 +5,8 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY exporter.py .
+COPY exporter.py metrics.py metrics.yaml .
 
-EXPOSE 8001
+EXPOSE 8001 8002
 
 CMD ["python", "exporter.py"]

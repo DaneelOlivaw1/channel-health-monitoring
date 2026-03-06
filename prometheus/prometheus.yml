@@ -12,14 +12,6 @@ scrape_configs:
         labels:
           service: 'prometheus'
 
-  - job_name: 'channel-health'
-    scrape_interval: 60s
-    static_configs:
-      - targets: ['channel-health-exporter:8001']
-        labels:
-          service: 'channel-health'
-          app: 'claude_code'
-
   - job_name: 'rust-exporter'
     scrape_interval: 60s
     static_configs:

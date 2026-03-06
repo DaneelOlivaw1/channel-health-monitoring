@@ -1,5 +1,5 @@
 # Multi-stage build for Rust exporter
-FROM rust:1.75 as builder
+FROM rust:latest AS builder
 
 WORKDIR /app
 
@@ -14,7 +14,7 @@ COPY tests ./tests
 RUN cargo build --release
 
 # Runtime stage
-FROM debian:bookworm-slim
+FROM ubuntu:24.04
 
 # Install ca-certificates for HTTPS
 RUN apt-get update && \

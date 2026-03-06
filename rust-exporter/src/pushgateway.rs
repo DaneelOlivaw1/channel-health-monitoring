@@ -1,5 +1,4 @@
 use anyhow::Result;
-use metrics::{describe_gauge, gauge};
 use std::time::Duration;
 use tokio::time;
 
@@ -41,7 +40,10 @@ impl PushgatewayConfig {
     }
 }
 
-pub async fn start_pushgateway_worker(config: PushgatewayConfig) -> Result<()> {
+pub async fn start_pushgateway_worker(
+    config: PushgatewayConfig,
+    handle: metrics_exporter_prometheus::PrometheusHandle,
+) -> Result<()> {
     if !config.is_enabled() {
         tracing::info!("Pushgateway is disabled (no URL configured)");
         return Ok(());
@@ -59,7 +61,7 @@ pub async fn start_pushgateway_worker(config: PushgatewayConfig) -> Result<()> {
     loop {
         interval_timer.tick().await;
         
-        match push_metrics(&config).await {
+        match push_metrics(&config, &handle).await {
             Ok(_) => {
                 tracing::info!("Successfully pushed metrics to Pushgateway");
             }
@@ -70,11 +72,10 @@ pub async fn start_pushgateway_worker(config: PushgatewayConfig) -> Result<()> {
     }
 }
 
-async fn push_metrics(config: &PushgatewayConfig) -> Result<()> {
-    let handle = metrics_exporter_prometheus::PrometheusBuilder::new()
-        .build_recorder()
-        .handle();
-    
+async fn push_metrics(
+    config: &PushgatewayConfig,
+    handle: &metrics_exporter_prometheus::PrometheusHandle,
+) -> Result<()> {
     let metrics_text = handle.render();
     
     let client = reqwest::Client::new();

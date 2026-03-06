@@ -1,4 +1,5 @@
 use anyhow::Result;
+use metrics_exporter_prometheus::PrometheusHandle;
 use rust_exporter::{
     api::create_router,
     core::collector::MetricCollector,
@@ -15,11 +16,21 @@ use tokio::{signal, time};
 use tracing::{info, error};
 use tracing_subscriber;
 
+fn setup_metrics_recorder() -> PrometheusHandle {
+    let builder = metrics_exporter_prometheus::PrometheusBuilder::new();
+    builder
+        .install_recorder()
+        .expect("failed to install Prometheus recorder")
+}
+
 #[tokio::main]
 async fn main() -> Result<()> {
     tracing_subscriber::fmt::init();
     
     info!("Starting Rust Exporter...");
+    
+    // Install global Prometheus recorder BEFORE any metrics are recorded
+    let prometheus_handle = setup_metrics_recorder();
     
     let database_url = std::env::var("DATABASE_URL")
         .expect("DATABASE_URL must be set");
@@ -64,8 +75,9 @@ async fn main() -> Result<()> {
     let pushgateway_config = PushgatewayConfig::from_env()?;
     if pushgateway_config.is_enabled() {
         info!("Pushgateway is enabled, starting worker...");
+        let push_handle = prometheus_handle.clone();
         tokio::spawn(async move {
-            if let Err(e) = start_pushgateway_worker(pushgateway_config).await {
+            if let Err(e) = start_pushgateway_worker(pushgateway_config, push_handle).await {
                 error!("Pushgateway worker error: {}", e);
             }
         });
@@ -73,7 +85,7 @@ async fn main() -> Result<()> {
         info!("Pushgateway is disabled");
     }
     
-    let app = create_router();
+    let app = create_router(prometheus_handle);
     
     let addr = "0.0.0.0:8001";
     info!("Starting HTTP server on {}", addr);

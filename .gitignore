@@ -1,5 +1,6 @@
-# 环境变量
+# 环境变量和敏感信息
 .env
+AGENTS.md
 
 # Node.js
 node_modules/

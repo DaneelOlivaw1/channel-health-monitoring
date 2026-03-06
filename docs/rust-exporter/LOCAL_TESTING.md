@@ -72,8 +72,14 @@ Collected metrics from cost
 
 #### 步骤 3: 测试本地端点
 
+**⚠️ 重要：启动后等待 2-3 分钟再测试！**
+
 ```bash
-# 1. 健康检查
+# 等待第一次采集完成
+echo "等待 90 秒，让采集器运行..."
+sleep 90
+
+# 1. 健康检查（立即可用）
 curl http://localhost:8001/health
 # 应该返回: OK
 
@@ -87,21 +93,32 @@ curl http://localhost:8001/metrics | grep channel_cache_reuse_percent
 ```
 
 **预期输出**：
+
+如果数据库有数据：
 ```
 # HELP channel_availability_percent Channel availability percentage
 # TYPE channel_availability_percent gauge
 channel_availability_percent{channel_group="aws"} 95.5
 channel_availability_percent{channel_group="special"} 98.2
+```
 
-# HELP channel_avg_cost_cny_opus Average cost for Opus model
-# TYPE channel_avg_cost_cny_opus gauge
-channel_avg_cost_cny_opus{channel_group="aws"} 0.54
-channel_avg_cost_cny_opus{channel_group="special"} 0.60
+如果数据库最近 3 小时没有数据：
+```
+# HELP channel_availability_percent Channel availability percentage
+# TYPE channel_availability_percent gauge
+# （没有数据点，或者值为 0）
+```
 
-# HELP channel_cache_reuse_percent Cache reuse percentage
-# TYPE channel_cache_reuse_percent gauge
-channel_cache_reuse_percent{channel_group="aws"} 85.5
-channel_cache_reuse_percent{channel_group="special"} 92.3
+**如果指标为空，检查数据库**：
+```bash
+# 检查最近 3 小时是否有数据
+psql "postgres://dev_read_chunqiu:w7QcN8zp2VxT5Rb@pgm-6we2iwj50gul9ez8eo.pgsql.japan.rds.aliyuncs.com:5432/claude_code" -c "
+SELECT 
+    COUNT(*) as total_records,
+    MAX(created_at) as latest_record
+FROM channel_request_log
+WHERE created_at >= NOW() - INTERVAL '3 hours';
+"
 ```
 
 #### 步骤 4: 验证 Prometheus 抓取

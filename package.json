@@ -1,0 +1,28 @@
+{
+  "name": "proxy_project-observatory",
+  "version": "1.0.0",
+  "description": "基于 Prometheus + Grafana 的渠道健康监控系统，实时监控渠道可用性、缓存复用率和成本。",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test:e2e": "npx playwright test",
+    "test:e2e:headed": "npx playwright test --headed"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DaneelOlivaw1/channel-health-monitoring.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/DaneelOlivaw1/channel-health-monitoring/issues"
+  },
+  "homepage": "https://github.com/DaneelOlivaw1/channel-health-monitoring#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.58.2"
+  }
+}

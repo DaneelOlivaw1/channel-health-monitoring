@@ -1,25 +1,29 @@
-# Grafana data
-grafana_data/
-
-# Prometheus data
-prometheus_data/
-
-# Alertmanager data
-alertmanager_data/
-
-# Environment variables
+# 环境变量
 .env
 
-# Backup files
-*.bak
+# Node.js
+node_modules/
 
-# Temporary files
-/tmp/
+# Playwright（测试产物）
+test-results/
+playwright-report/
+playwright/.auth/
 
-# Python cache
+# Rust 编译产物
+rust-exporter/target/
+
+# Python 缓存
 __pycache__/
 *.pyc
 *.pyo
+.ruff_cache/
 
-# Docker volumes
+# Docker 数据卷
+grafana_data/
+prometheus_data/
+alertmanager_data/
 volumes/
+
+# 临时文件
+/tmp/
+*.bak
